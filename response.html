@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>반응속도</title>
+    <style>
+      #screen {
+        width: 300px;
+        height: 200px;
+        text-align: center;
+        user-select: none;
+      }
+      #screen.waiting {
+        background-color: aqua;
+      }
+      #screen.ready {
+        background-color: red;
+        color: white;
+      }
+      #screen.now {
+        background-color: greenyellow;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="screen" class="waiting">Click to Start</div>
+    <div id="result">response time :</div>
+    <script>
+      $screen = document.querySelector("#screen");
+      $result = document.querySelector("#result");
+      let startTime;
+      let endTime;
+      let record = [];
+
+      $screen.addEventListener("click", () => {
+        if ($screen.classList.contains("waiting")) {
+          $screen.classList.toggle("waiting");
+          $screen.classList.toggle("ready");
+          $screen.textContent = "ready to click...";
+
+          setTimeout(() => {
+            $screen.classList.toggle("ready");
+            $screen.classList.toggle("now");
+            startTime = new Date();
+          }, Math.random() * 2000 + 1000);
+        } else if ($screen.classList.contains("ready")) {
+          return;
+        } else if ($screen.classList.contains("now")) {
+          endTime = new Date();
+          record.push(endTime - startTime);
+          $result.textContent = record;
+          $screen.classList.toggle("waiting");
+          $screen.classList.toggle("now");
+        }
+      });
+    </script>
+  </body>
+</html>

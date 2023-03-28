@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>틱택토</title>
+    <style>
+      table {
+        border-collapse: collapse;
+      }
+
+      td {
+        border: 1px solid black;
+        width: 40px;
+        height: 40px;
+        text-align: center;
+      }
+    </style>
+  </head>
+
+  <body>
+    <!-- <table>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td></td>
+    </tr>
+  </table> -->
+    <script>
+      const { body } = document;
+
+      const $table = document.createElement("table");
+      const $result = document.createElement("div");
+      const rows = [];
+
+      let turn = "O";
+      console.log($table);
+
+      const checkWinner = (event) => {
+        let rowIndex;
+        let colIndex;
+        hasWinner = false;
+        rows.forEach((row, ri) => {
+          row.forEach((col, ci) => {
+            if (col === event) {
+              rowIndex = ri;
+              colIndex = ci;
+            }
+          });
+        });
+        if (
+          rows[0][colIndex].textContent === turn &&
+          rows[1][colIndex].textContent === turn &&
+          rows[2][colIndex].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        if (
+          rows[rowIndex][0].textContent === turn &&
+          rows[rowIndex][1].textContent === turn &&
+          rows[rowIndex][2].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        if (
+          rows[0][0].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][2].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+        if (
+          rows[0][2].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][0].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+
+        return hasWinner;
+
+        if (rows.flat().every((td) => td.textContent))
+          $result.textContent = "Draw";
+      };
+
+      const computerTurn = () => {
+        const emptyCell = rows.flat().filter((v) => !v.textContent);
+        const randomCell =
+          emptyCell[Math.floor(Math.random() * emptyCell.length)];
+        randomCell.textContent = "X";
+        if (checkWinner(randomCell)) {
+          $result.textContent = `${turn} wins`;
+          $table.removeEventListener("click", callback);
+        }
+        turn = turn === "O" ? "X" : "O";
+      };
+      const callback = (event) => {
+        if (event.target.textContent) {
+          $result.textContent = "choose another";
+
+          return;
+        } else {
+          event.target.textContent = turn;
+
+          if (checkWinner(event.target)) {
+            $result.textContent = `${turn} wins`;
+            $table.removeEventListener("click", callback);
+          } else {
+            turn = turn === "O" ? "X" : "O";
+            computerTurn();
+          }
+        }
+      };
+      // [
+      //   [td, td, td],
+      //   [td, td, td],
+      //   [td, td, td],
+      // ]
+
+      for (let i = 0; i < 3; i++) {
+        const $tr = document.createElement("tr");
+        const cells = [];
+        for (let j = 0; j < 3; j++) {
+          const $td = document.createElement("td");
+          cells.push($td);
+          $tr.append($td);
+        }
+        rows.push(cells);
+        $table.append($tr);
+      }
+      console.log(rows);
+      body.append($table);
+      body.append($result);
+      $table.addEventListener("click", callback);
+    </script>
+  </body>
+</html>

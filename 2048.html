@@ -1,0 +1,256 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>2048</title>
+    <style>
+      #table {
+        border-collapse: collapse;
+        user-select: none;
+      }
+      #table td {
+        border: 10px solid #bbada0;
+        width: 116px;
+        height: 128px;
+        font-size: 50px;
+        font-weight: bold;
+        text-align: center;
+      }
+      #score {
+        user-select: none;
+      }
+      .color-2 {
+        background-color: #eee4da;
+        color: #776e65;
+      }
+      .color-4 {
+        background-color: #eee1c9;
+        color: #776e65;
+      }
+      .color-8 {
+        background-color: #f3b27a;
+        color: "white";
+      }
+      .color-16 {
+        background-color: #f69664;
+        color: "white";
+      }
+      .color-32 {
+        background-color: #f77c5f;
+        color: "white";
+      }
+      .color-64 {
+        background-color: #f75f3b;
+        color: "white";
+      }
+      .color-128 {
+        background-color: #edd073;
+        color: #776e65;
+      }
+      .color-256 {
+        background-color: #edcc62;
+        color: #776e65;
+      }
+      .color-512 {
+        background-color: #edc950;
+        color: #776e65;
+      }
+      .color-1024 {
+        background-color: #edc53f;
+        color: #776e65;
+      }
+      .color-2048 {
+        background-color: #edc22e;
+        color: #776e65;
+      }
+    </style>
+  </head>
+  <body>
+    <table id="table"></table>
+    <div id="score">0</div>
+    <script>
+      const $table = document.querySelector("#table");
+      const $score = document.querySelector("#score");
+      let data = [];
+
+      function startGame() {
+        const $fragment = document.createDocumentFragment();
+        [1, 2, 3, 4].forEach(() => {
+          const rowData = [];
+          data.push(rowData);
+          const $tr = document.createElement("tr");
+          [1, 2, 3, 4].forEach(() => {
+            rowData.push(0);
+            const $td = document.createElement("td");
+            $tr.append($td);
+          });
+          $fragment.append($tr);
+        });
+        $table.append($fragment);
+
+        put2ToRandomCell();
+        draw();
+      }
+
+      function put2ToRandomCell() {
+        const emptyCells = [];
+        data.forEach((rowData, i) => {
+          rowData.forEach((cellData, j) => {
+            if (!cellData) {
+              emptyCells.push([i, j]);
+            }
+          });
+        });
+        const randomCell =
+          emptyCells[Math.floor(Math.random() * emptyCells.length)];
+        data[randomCell[0]][randomCell[1]] = 2;
+      }
+
+      function draw() {
+        data.forEach((rowData, i) => {
+          rowData.forEach((cellData, j) => {
+            const $target = $table.children[i].children[j];
+            if (cellData > 0) {
+              $target.textContent = cellData;
+              $target.className = "color-" + cellData;
+            } else {
+              $target.textContent = "";
+              $target.className = "";
+            }
+            //else {$target.textContent = '';...}
+          });
+        });
+      }
+
+      //   data = [
+      //     [0, 2, , 2],
+      //     [2, 0, 2, 4],
+      //     [4, 4, 0, 8],
+      //     [0, 4, 0, 4],
+      //   ];
+      function moveCells(direction) {
+        switch (direction) {
+          case "left": {
+            const newData = [[], [], [], []];
+            data.forEach((rowData, i) => {
+              const currentRow = newData[i];
+              rowData.forEach((cellData, j) => {
+                if (cellData) {
+                  const prevData = currentRow[currentRow.length - 1]; //undefined?
+
+                  if (cellData === prevData) {
+                    currentRow[currentRow.length - 1] *= -2;
+                  } else {
+                    newData[i].push(cellData);
+                  }
+                }
+              });
+            });
+            [1, 2, 3, 4].forEach((rowData, i) => {
+              [1, 2, 3, 4].forEach((cellData, j) => {
+                data[i][j] = Math.abs(newData[i][j]) || 0;
+              });
+            });
+            break;
+          }
+          case "right": {
+            const newData = [[], [], [], []];
+            data.forEach((rowData, i) => {
+              const currentRow = newData[i];
+              rowData.forEach((cellData, j) => {
+                if (cellData) {
+                  const prevData = currentRow[currentRow.length - 1]; //undefined?
+
+                  if (cellData === prevData) {
+                    currentRow[currentRow.length - 1] *= -2;
+                    // const newData = [[], [], [], []];
+                    // data.forEach((rowData, i) => {
+                    //   const currentRow = newData[i];
+                    //   rowData.forEach((cellData, j) => {
+                    //     const prevData = currentRow[currentRow.length - 1];
+                    //     if (cellData) {
+                    //       if (cellData === prevData) {
+                    //         currentRow[currentRow.length - 1] *= -2;
+                  } else {
+                    newData[i].push(cellData);
+                  }
+                }
+              });
+            });
+            [1, 2, 3, 4].forEach((rowData, i) => {
+              [1, 2, 3, 4].forEach((cellData, j) => {
+                data[i][j] = Math.abs(newData[i][3 - j]) || 0;
+              });
+            });
+            break;
+          }
+          case "up": {
+            const newData = [[], [], [], []];
+            data.forEach((rowData, i) => {
+              rowData.forEach((cellData, j) => {
+                const currentRow = newData[j];
+                const prevData = currentRow[currentRow.length - 1];
+
+                if (cellData) {
+                  if (cellData === prevData) {
+                    currentRow[currentRow.length - 1] *= -2;
+                  } else newData[j].push(cellData);
+                }
+              });
+            });
+            [1, 2, 3, 4].forEach((rowData, i) => {
+              [1, 2, 3, 4].forEach((cellData, j) => {
+                data[i][j] = Math.abs(newData[j][i]) || 0;
+              });
+            });
+            break;
+          }
+          case "down": {
+            const newData = [[], [], [], []];
+            console.log("dd");
+
+            data.forEach((rowData, i) => {
+              rowData.forEach((cellData, j) => {
+                const currentRow = newData[j];
+                const prevData = currentRow[currentRow.length - 1];
+                if (cellData) {
+                  if (cellData === prevData) {
+                    currentRow[currentRow.length - 1] *= -2;
+                  } else {
+                    newData[j].push(cellData);
+                  }
+                }
+              });
+            });
+            [1, 2, 3, 4].forEach((rowData, i) => {
+              [1, 2, 3, 4].forEach((cellData, j) => {
+                data[i][j] = Math.abs(newData[j][i]) || 0;
+              });
+            });
+            break;
+          }
+        }
+
+        draw();
+      }
+      startGame();
+      window.addEventListener("keyup", (event) => {
+        if (event.key === "ArrowUp") {
+          moveCells("up");
+        } else if (event.key === "ArrowDown") {
+          moveCells("down");
+        } else if (event.key === "ArrowLeft") {
+          moveCells("left");
+        } else if (event.key === "ArrowRight") {
+          moveCells("right");
+        }
+      });
+      data = [
+        [2, 2, 2, 2],
+        [2, 0, 2, 4],
+        [4, 4, 0, 8],
+        [0, 4, 0, 4],
+      ];
+      draw();
+    </script>
+  </body>
+</html>

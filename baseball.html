@@ -1,0 +1,94 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Baseball Game</title>
+  </head>
+  <body>
+    <form id="form">
+      <input type="number" id="input" />
+      <button>확인</button>
+    </form>
+    <div id="msg"></div>
+    <div id="logs"></div>
+    <script>
+      const $form = document.querySelector("#form");
+      const $input = document.querySelector("#input");
+      const $logs = document.querySelector("#logs");
+      const $msg = document.querySelector("#msg");
+      const numbers = [];
+      let answer = [];
+      let tried = [];
+
+      for (let n = 0; n < 9; n++) {
+        numbers.push(n + 1);
+      }
+
+      for (let n = 0; n < 4; n++) {
+        const index = Math.floor(Math.random() * numbers.length);
+        answer.push(numbers[index]);
+        numbers.splice(index, 1);
+        console.log(answer);
+        // console.log(numbers);
+      }
+
+      const check = (event) => {
+        event.preventDefault();
+        const value = $input.value;
+        const valueArr = [...value];
+        $input.value = "";
+        console.log($input.value);
+
+        if (value.length !== 4) {
+          $msg.textContent = "4 digit please";
+          setTimeout(() => {
+            $msg.textContent = "";
+          }, 1500);
+        } else if (valueArr.includes("0")) {
+          $msg.textContent = "0 is out of range!";
+          setTimeout(() => {
+            $msg.textContent = "";
+          }, 1500);
+        } else if (tried.includes(value)) {
+          $msg.textContent = "Number tried already";
+        } else if (new Set(value).size !== 4) {
+          $msg.textContent = "No same Numbers!";
+        } else {
+          tried.push(value);
+          console.log(tried);
+
+          judge(valueArr);
+        }
+      };
+      const judge = (valueArr) => {
+        console.log(answer, valueArr);
+        if (answer.join("").toString() === valueArr.join("")) {
+          appendLogs("homerun");
+        } else {
+          let ball = 0;
+          let strike = 0;
+          for (let n = 0; n < 4; n++) {
+            console.log(answer[n], valueArr[n]);
+            if (answer.includes(Number(valueArr[n]))) {
+              if (answer[n] === Number(valueArr[n])) {
+                strike++;
+              } else {
+                ball++;
+              }
+            }
+          }
+          appendLogs(ball, strike);
+        }
+      };
+      const appendLogs = (judge, judge2) => {
+        if (judge === "homerun") {
+          $msg.textContent = "HomeRun!";
+          console.log("home");
+        } else {
+          $logs.append(`${answer.join("")} : ${judge} ball ${judge2} strike`);
+        }
+      };
+
+      $form.addEventListener("submit", check);
+    </script>
+  </body>
+</html>

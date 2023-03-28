@@ -1,0 +1,93 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>가위바위보</title>
+    <style>
+      #computer {
+        width: 142px;
+        height: 200px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="computer"></div>
+    <div>
+      <button id="scissors" class="btn">가위</button>
+      <button id="rock" class="btn">바위</button>
+      <button id="paper" class="btn">보</button>
+    </div>
+    <div id="score">0</div>
+    <script>
+      const $computer = document.querySelector("#computer");
+      const $rock = document.querySelector("#rock");
+      const $scissors = document.querySelector("#scissors");
+      const $papers = document.querySelector("#papers");
+      const IMG_URL = "./rsp.png";
+      const $score = document.querySelector("#score");
+      //   $computer.style.background = `url(${IMG_URL}) 0 0`;
+      $computer.style.background = `url(${IMG_URL}) 0 0`;
+      $computer.style.backgroundSize = "auto 200px";
+
+      const rspX = {
+        rock: "-220px",
+        scissors: "0",
+        papers: "-440px",
+      };
+
+      const waiting = () => {
+        if (aiChoice === "scissors") {
+          aiChoice = "papers";
+          //console.log(aiChoice);
+        } else if (aiChoice === "papers") {
+          aiChoice = "rock";
+        } else if (aiChoice === "rock") {
+          aiChoice = "scissors";
+        }
+        $computer.style.background = `url(${IMG_URL}) ${rspX[aiChoice]} 0`;
+        $computer.style.backgroundSize = "auto 200px";
+        clickable = true;
+      };
+      const scoreTable = {
+        rock: 0,
+        scissors: 1,
+        papers: -1,
+      };
+      const checkWinner = (event) => {
+        const myChoice =
+          event.target.textContent === "바위"
+            ? "rock"
+            : event.target.textContent === "가위"
+            ? "scissors"
+            : "papers";
+        const result = scoreTable[myChoice] - scoreTable[aiChoice];
+        let msg;
+        if ([2, -1].includes(result)) {
+          msg = "win";
+        } else if ([-2, 1].includes(result)) {
+          msg = "defeat";
+        } else {
+          msg = "draw";
+        }
+        $score.textContent = msg;
+      };
+
+      let clickable = true;
+      let aiChoice = "scissors";
+      let intervalID = setInterval(waiting, 200);
+
+      const buttonClicked = (event) => {
+        if (!clickable) return;
+        clickable = false;
+        clearInterval(intervalID);
+        checkWinner(event);
+        setTimeout(() => {
+          intervalID = setInterval(waiting, 200);
+        }, 1000);
+      };
+      document.querySelectorAll(".btn").forEach((ele) => {
+        ele.addEventListener("click", buttonClicked);
+      });
+    </script>
+  </body>
+</html>
